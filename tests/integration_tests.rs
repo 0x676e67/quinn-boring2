@@ -5,7 +5,7 @@ use boring_sys as bffi;
 use core::fmt::{Debug, Formatter};
 use once_cell::sync::Lazy;
 use quinn::{Connecting, Connection, RecvStream, SendStream, WriteError, ZeroRttAccepted};
-use quinn_boring::{ClientConfig, QuicSslContext, ServerConfig};
+use quinn_boring2::{ClientConfig, QuicSslContext, ServerConfig};
 use quinn_proto::{ConnectError, ConnectionError, TransportErrorCode};
 use rcgen::{BasicConstraints, CertificateParams, IsCa};
 use std::io::Write;
@@ -274,7 +274,7 @@ async fn zero_rtt_rejected() -> Result<()> {
 
 #[derive(Clone, Debug)]
 struct ConnectionInfo {
-    handshake_data: Box<quinn_boring::HandshakeData>,
+    handshake_data: Box<quinn_boring2::HandshakeData>,
     keyring_material: [u8; 64],
 }
 
@@ -348,7 +348,7 @@ impl Server {
         Self::run_with_retry(server_config, false)
     }
     fn run_with_retry(server_config: quinn::ServerConfig, use_retry: bool) -> Result<Arc<Self>> {
-        let endpoint = quinn_boring::helpers::server_endpoint(server_config, local_address())?;
+        let endpoint = quinn_boring2::helpers::server_endpoint(server_config, local_address())?;
         let addr = endpoint.local_addr()?;
 
         let server = Arc::new(Self {
@@ -398,7 +398,7 @@ impl Server {
         &self,
         client_config: quinn::ClientConfig,
     ) -> std::result::Result<Connecting, ConnectError> {
-        let mut endpoint = quinn_boring::helpers::client_endpoint(local_address()).unwrap();
+        let mut endpoint = quinn_boring2::helpers::client_endpoint(local_address()).unwrap();
         endpoint.set_default_client_config(client_config);
 
         // Connect to the server.
@@ -497,11 +497,11 @@ fn local_address() -> SocketAddr {
     "127.0.0.1:0".parse().unwrap()
 }
 
-fn handshake_data(conn: &Connection) -> Result<Box<quinn_boring::HandshakeData>> {
+fn handshake_data(conn: &Connection) -> Result<Box<quinn_boring2::HandshakeData>> {
     Ok(conn
         .handshake_data()
         .unwrap()
-        .downcast::<quinn_boring::HandshakeData>()
+        .downcast::<quinn_boring2::HandshakeData>()
         .unwrap())
 }
 
@@ -510,7 +510,7 @@ fn client_config(client_crypto: ClientConfig) -> quinn::ClientConfig {
 }
 
 fn server_config(server_crypto: ServerConfig) -> Result<quinn::ServerConfig> {
-    Ok(quinn_boring::helpers::server_config(Arc::new(
+    Ok(quinn_boring2::helpers::server_config(Arc::new(
         server_crypto,
     ))?)
 }

@@ -28,6 +28,6 @@ which can be made to run with the BoringSSL provider.
 The BoringSSL provider is based on the Cloudflare [Boring library](https://github.com/cloudflare/boring), which
 supports building against a FIPS-validated version of BoringSSL.
 
-## Authors
+## Accolades
 
-* [Nathan Mittler](https://github.com/nmittler) - *Project owner*
+The project is based on a fork of [quinn-boring](https://github.com/quinn-rs/quinn-boring).
